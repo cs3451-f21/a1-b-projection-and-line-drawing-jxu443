@@ -46,7 +46,7 @@ class MyDrawing extends Drawing {
         let viewportM = this.viewport() //pass
 
         this.M = identityMatrix()
-        this.M = this.multiply(this.multiply(viewportM, this.mproj), this.ctm)
+        this.M = this.multiply(viewportM, this.multiply(this.mproj, this.ctm))
     }
 
     endShape() {
@@ -100,8 +100,8 @@ class MyDrawing extends Drawing {
             
             this.initMatrix() //use ctm as calculator
            
-            this.translate(-(left+right)/2, -(top+bottom)/2, -(near+far)/2); 
             this.scale(2/(right-left), 2/(top-bottom), 2/(near- far));  
+            this.translate(-(left+right)/2, -(top+bottom)/2, -(near+far)/2);   
 
             this.mproj = this.ctm // Mortho = Mscale * Mtranslate
             
@@ -124,7 +124,7 @@ class MyDrawing extends Drawing {
             [0, 0, 1, z],
             [0, 0, 0, 1]
         ];
-        this.ctm = this.multiply(a, this.ctm);
+        this.ctm = this.multiply(this.ctm, a);
     }
     
     // mutiply the current matrix by the scale
@@ -136,7 +136,7 @@ class MyDrawing extends Drawing {
             [0, 0, z, 0],
             [0, 0, 0, 1]
         ];
-        this.ctm = this.multiply(a, this.ctm);
+        this.ctm = this.multiply(this.ctm, a);
     }
     
     // mutiply the current matrix by the rotation
@@ -162,7 +162,7 @@ class MyDrawing extends Drawing {
             [-Math.sin(theta), 0, Math.cos(theta), 0],
             [0, 0, 0, 1]
         ];
-        this.ctm = this.multiply(a, this.ctm);
+        this.ctm = this.multiply(this.ctm, a);
     }
     
     // mutiply the current matrix by the rotation
