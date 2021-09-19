@@ -3,17 +3,20 @@ import {init_tests, draw_tests} from "./projection_test"
 
 // A class for our application state and functionality
 class MyDrawing extends Drawing {
-    ctm: number[][] // syntax?
-    //curr: number[][]
-    vertices: Point[] // Array?
+    mproj: number[][]
+    ctm: number[][]
+    M : number[][]
+    vertices: Point[] 
     
     constructor (div: HTMLElement) {
         super(div)
-        this.ctm = [...Array(4)].map(e => Array(4)) 
-        //this.curr = [...Array(4)].map(e => Array(4)) 
-        this.vertices = new Array(0)
-        init_tests(this)
 
+        this.ctm = identityMatrix()
+        this.mproj = identityMatrix()
+        this.M = identityMatrix()
+        this.vertices = new Array(0)
+
+        init_tests(this)
     }
 
     drawScene() {
@@ -30,63 +33,80 @@ class MyDrawing extends Drawing {
 
 
     beginShape() {
-        this.vertices = new Array(0);
+        const width = this.canv.width
+        const height = this.canv.height
+
+        //viewport 
+        this.scale(width/2, height/2, 0);
+        this.translate((width-1)/2, (height-1)/2, 0);
+
+        
+        this.M = this.multiply(this.ctm, this.mproj)
     }
 
     endShape() {
+        //console.log("endShape, length of vertices", this.vertices.length)
         for (let i = 0; i < this.vertices.length-1; i += 2) {
             super.line(this.vertices[i], this.vertices[i+1]);
         }
         this.vertices = new Array(0);
-        //this.initMatrix;
+
+        //reset every matrix to identity matrix
+        this.ctm = identityMatrix()
+        this.mproj = identityMatrix()
+        this.M = identityMatrix()
+        
     }
 
     vertex(x: number, y: number, z: number) {
         let p = [
             [x],[y],[z],[1]
         ]
-        let transformedP = this.multiply(this.ctm, p)
+        let transformedP = this.multiply(this.M, p)
         let point = {
             x: transformedP[0][0], 
             y: transformedP[1][0],
             z: transformedP[2][0]
         };
-        console.log(this.vertices.length)
         this.vertices.push(point)
     }
 
     perspective(fov: number, near: number, far: number) {
-        this.rotateY(-fov);
-        const pToO = [ //view transformation
+        const pToO = [ // perspective to ortho
             [near, 0, 0, 0],
             [0, near, 0, 0],
             [0, 0, near+far, -near*far],
             [0, 0, 1, 0],
         ]
-        this.ctm = this.multiply(pToO,this.ctm)
-        this.ortho(0,near-far,0,near-far,near,far) // center is assumed to be the origin
+        this.mproj = pToO
+        
+        fov = fov * Math.PI/180;
+        const aspectRatio = this.canv.width / this.canv.height
+        let top = Math.tan(fov/2) * Math.abs(near)
+        let bottom = -top
+        let right = top * aspectRatio
+        let left = -right
+        this.ortho(left, right, top, bottom, near, far) // center is assumed to be the origin
     }
 
     ortho( left: number, right: number, top: number, bottom: number, 
         near: number, far: number) {
-            const width = this.canv.width
-            const height = this.canv.height
-            this.translate(-(left+right)/2 + width/2, -(top+bottom)/2 + height/2, -(near+far)/2); // to center of the screen
-            //this.scale(2/(right-left), 2/(top-bottom), 2/(near- far)); //to canonical tube
+            let oldctm = this.ctm; //save
             
-            //viewport 
-            //this. scale((this.canv.width-1)/2, (this.canv.height-1)/2, 0);
-            //this.scale(this.canv.height/2, this.canv.width/2, 0);
+            this.initMatrix() //use ctm as calculator
+            this.ctm = this.mproj // in case it is perspective proj
+            this.translate(-(left+right)/2, -(top+bottom)/2, -(near+far)/2); 
+            this.scale(2/(right-left), 2/(top-bottom), 2/(near- far)); //to canonical tube at center
+            this.mproj = this.ctm // Mortho = Mscale * Mtranslate
+            
+            this.ctm = oldctm; //restore 
 	}
 
+    // All functions bellow directly applied to this.ctm----------------------------------------------
+    
     initMatrix() // was init()
     {
-        this.ctm = [
-            [1, 0, 0, 0],
-            [0, 1, 0, 0],
-            [0, 0, 1, 0],
-            [0, 0, 0, 1],
-        ];
+        this.ctm = identityMatrix()
     }
     
     // mutiply the current matrix by the translation
@@ -98,7 +118,7 @@ class MyDrawing extends Drawing {
             [0, 0, 1, z],
             [0, 0, 0, 1]
         ];
-        this.ctm = this.multiply(this.ctm, a);
+        this.ctm = this.multiply(a, this.ctm);
     }
     
     // mutiply the current matrix by the scale
@@ -110,7 +130,7 @@ class MyDrawing extends Drawing {
             [0, 0, z, 0],
             [0, 0, 0, 1]
         ];
-        this.ctm = this.multiply(this.ctm, a);
+        this.ctm = this.multiply(a, this.ctm);
     }
     
     // mutiply the current matrix by the rotation
@@ -123,7 +143,7 @@ class MyDrawing extends Drawing {
             [0, Math.sin(theta), Math.cos(theta), 0],
             [0, 0, 0, 1]
         ];
-        this.ctm = this.multiply(this.ctm, a);
+        this.ctm = this.multiply(a, this.ctm);
     }
     
     // mutiply the current matrix by the rotation
@@ -136,7 +156,7 @@ class MyDrawing extends Drawing {
             [-Math.sin(theta), 0, Math.cos(theta), 0],
             [0, 0, 0, 1]
         ];
-        this.ctm = this.multiply(this.ctm, a);
+        this.ctm = this.multiply(a, this.ctm);
     }
     
     // mutiply the current matrix by the rotation
@@ -149,7 +169,7 @@ class MyDrawing extends Drawing {
             [0, 0, 1, 0],
             [0, 0, 0, 1]
         ];
-        this.ctm = this.multiply(this.ctm, a);
+        this.ctm = this.multiply(a, this.ctm);
     }
 
     printMatrix() // was print
@@ -176,6 +196,16 @@ class MyDrawing extends Drawing {
 
 // a global variable for our state
 var myDrawing: MyDrawing
+
+//helper function
+function identityMatrix(): number[][] {
+    return [
+        [1, 0, 0, 0],
+        [0, 1, 0, 0],
+        [0, 0, 1, 0],
+        [0, 0, 0, 1],
+    ];
+}
 
 // main function, to keep things together and keep the variables created self contained
 function exec() {
