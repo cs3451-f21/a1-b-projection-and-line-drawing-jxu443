@@ -99,8 +99,10 @@ class MyDrawing extends Drawing {
             let oldctm = this.ctm; //save
             
             this.initMatrix() //use ctm as calculator
-            this.scale(2/(right-left), 2/(top-bottom), 2/(near- far)); 
+           
             this.translate(-(left+right)/2, -(top+bottom)/2, -(near+far)/2); 
+            this.scale(2/(right-left), 2/(top-bottom), 2/(near- far));  
+
             this.mproj = this.ctm // Mortho = Mscale * Mtranslate
             
             this.ctm = oldctm; //restore 
@@ -122,7 +124,7 @@ class MyDrawing extends Drawing {
             [0, 0, 1, z],
             [0, 0, 0, 1]
         ];
-        this.ctm = this.multiply(this.ctm, a);
+        this.ctm = this.multiply(a, this.ctm);
     }
     
     // mutiply the current matrix by the scale
@@ -134,7 +136,7 @@ class MyDrawing extends Drawing {
             [0, 0, z, 0],
             [0, 0, 0, 1]
         ];
-        this.ctm = this.multiply(this.ctm, a);
+        this.ctm = this.multiply(a, this.ctm);
     }
     
     // mutiply the current matrix by the rotation
@@ -160,7 +162,7 @@ class MyDrawing extends Drawing {
             [-Math.sin(theta), 0, Math.cos(theta), 0],
             [0, 0, 0, 1]
         ];
-        this.ctm = this.multiply(this.ctm, a);
+        this.ctm = this.multiply(a, this.ctm);
     }
     
     // mutiply the current matrix by the rotation
@@ -209,27 +211,6 @@ function identityMatrix(): number[][] {
         [0, 0, 1, 0],
         [0, 0, 0, 1],
     ];
-}
-
-function matrixMultiplycation(matrix1: number[][], matrix2: number[][]): number[][] {
-    var row1 = matrix1.length;
-    var coloumn1 = matrix1[0].length;
-    var coloumn2 = matrix2[0].length;
-    var result: number[][] =
-        [[0, 0, 0, 0],
-        [0, 0, 0, 0],
-        [0, 0, 0, 0],
-        [0, 0, 0, 0]];
-
-    for (let i = 0; i < row1; i++) {
-        for (let j = 0; j < coloumn2; j++) {
-            for (let k = 0; k < coloumn1; k++) {
-                result[i][j] += matrix1[i][k] * matrix2[k][j]
-            }
-        }
-    }
-    return result;
-
 }
 
 // main function, to keep things together and keep the variables created self contained
