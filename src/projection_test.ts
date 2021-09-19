@@ -302,7 +302,6 @@ function face(dr: Drawing, sc: number, theta: number, dx: number, dy: number)
   
   dr.translate (0.5, 0.5, 0.0);
   dr.scale (0.4, 0.4, 1.0);
-  dr.printMatrix()
   Circle(dr);
 
   /* right eye */
@@ -368,6 +367,7 @@ function Circle(dr: Drawing)
   let steps = 50;
 
   dr.beginShape();
+  //dr.printMatrix()
 
   let x0 = 1.0;
   let y0 = 0.0;
@@ -386,12 +386,12 @@ function Circle(dr: Drawing)
 
 // you should write this
 function persp_initials(dr: Drawing) {
-  
-  dr.beginShape()
   dr.initMatrix()
   dr.perspective(60.0, -1.0, -10.0);
   dr.rotateX(-70)
   dr.translate(0, 80, -20)
+
+  dr.beginShape()
 
   // draw x 
   dr.vertex(-30, 10, -10)

@@ -44,14 +44,9 @@ class MyDrawing extends Drawing {
 
         //viewport 
         let viewportM = this.viewport() //pass
-        
+
         this.M = identityMatrix()
-        this.M = this.multiply(viewportM, this.mproj)
-        // console.log(this.M)
-        this.M = this.multiply(this.M, this.ctm)
-        // console.log("--------below is ctm------------------------------")
-        // console.log(this.ctm)
-        
+        this.M = this.multiply(this.multiply(viewportM, this.mproj), this.ctm)
     }
 
     endShape() {
@@ -96,7 +91,7 @@ class MyDrawing extends Drawing {
         let right = top * aspectRatio
         let left = -right
         this.ortho(left, right, top, bottom, near, far) // center is assumed to be the origin
-        this.mproj = this.multiply(this.ctm, pToO)
+        this.mproj = this.multiply(this.mproj, pToO)
     }
 
     ortho( left: number, right: number, top: number, bottom: number, 
@@ -104,8 +99,8 @@ class MyDrawing extends Drawing {
             let oldctm = this.ctm; //save
             
             this.initMatrix() //use ctm as calculator
+            this.scale(2/(right-left), 2/(top-bottom), 2/(near- far)); 
             this.translate(-(left+right)/2, -(top+bottom)/2, -(near+far)/2); 
-            this.scale(2/(right-left), 2/(top-bottom), 2/(near- far)); //to canonical tube at center
             this.mproj = this.ctm // Mortho = Mscale * Mtranslate
             
             this.ctm = oldctm; //restore 
@@ -188,7 +183,7 @@ class MyDrawing extends Drawing {
     }
 
     multiply(a: number[][], b:number[][]): number[][] {
-        const ar = a.length, ac = a[0].length, bc = b[0].length;
+        let ar = a.length, ac = a[0].length, bc = b[0].length;
         var m = new Array(ar);  
         for (var r = 0; r < ar; ++r) {
           m[r] = new Array(bc); 
@@ -214,6 +209,27 @@ function identityMatrix(): number[][] {
         [0, 0, 1, 0],
         [0, 0, 0, 1],
     ];
+}
+
+function matrixMultiplycation(matrix1: number[][], matrix2: number[][]): number[][] {
+    var row1 = matrix1.length;
+    var coloumn1 = matrix1[0].length;
+    var coloumn2 = matrix2[0].length;
+    var result: number[][] =
+        [[0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0]];
+
+    for (let i = 0; i < row1; i++) {
+        for (let j = 0; j < coloumn2; j++) {
+            for (let k = 0; k < coloumn1; k++) {
+                result[i][j] += matrix1[i][k] * matrix2[k][j]
+            }
+        }
+    }
+    return result;
+
 }
 
 // main function, to keep things together and keep the variables created self contained
