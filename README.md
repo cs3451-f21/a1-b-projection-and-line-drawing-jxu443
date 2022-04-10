@@ -41,8 +41,8 @@ The `beginShape()` and `endShape()` commands signal the start and end of a list 
 
 The vertices of the lines are first modified by the current transformation matrix, and then by which ever projection was most recently described (`ortho` or `perspective`). Only one of `ortho` or `perspective` is in effect at any one time. These projections do not affect the current transformation matrix, nor are they affected by the `initMatrix` command, and should be maintained as a separate matrix! Your `beginShape`, `vertex` and `endShape` commands must be able to draw any number of lines. You can draw the lines as soon as both vertices are given to you (using `vertex`), or you can store all of the vertices and draw all of the lines when `endShape` is called. Which way you use is up to you. To draw the lines, use the `line()` method on the `Drawing` object.
 
-# Provided Code (Gatech course CS3451)
-resources: https://github.com/cs3451-f21/a1-b-projection-and-line-drawing-chelliy 
+# Provided Code 
+resources: https://github.com/cs3451-f21/a1-b-projection-and-line-drawing-chelliy  from Georgia Tech course CS3451
 
 # Results
 
