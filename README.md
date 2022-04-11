@@ -1,7 +1,7 @@
 [![Open in Visual Studio Code](https://classroom.github.com/assets/open-in-vscode-f059dc9a6f8d3a56e377f745f24479a46679e63a5d9fe6f495e02850cd0d8118.svg)](https://classroom.github.com/online_ide?assignment_repo_id=5627425&assignment_repo_type=AssignmentRepo)
-# Assignment 1b:  Projection and Line Drawing
+# Projection and Line Drawing
 
-Goal: implement techniques used in a graphics library that is similar in design to early versions of OpenGL. In particular, I implemented transformation, projection, and mapping to the screen of user-provided lines. 
+Implement techniques used in a graphics library that is similar in design to early versions of OpenGL. In particular, I implemented transformation, projection, and mapping to the screen of user-provided lines. 
 
 ## Objectives
 1. matrix transformation
@@ -42,7 +42,7 @@ The `beginShape()` and `endShape()` commands signal the start and end of a list 
 The vertices of the lines are first modified by the current transformation matrix, and then by which ever projection was most recently described (`ortho` or `perspective`). Only one of `ortho` or `perspective` is in effect at any one time. These projections do not affect the current transformation matrix, nor are they affected by the `initMatrix` command, and should be maintained as a separate matrix! Your `beginShape`, `vertex` and `endShape` commands must be able to draw any number of lines. You can draw the lines as soon as both vertices are given to you (using `vertex`), or you can store all of the vertices and draw all of the lines when `endShape` is called. Which way you use is up to you. To draw the lines, use the `line()` method on the `Drawing` object.
 
 # Provided Code 
-resources: https://github.com/cs3451-f21/a1-b-projection-and-line-drawing-chelliy  from Georgia Tech course CS3451
+resources: https://github.com/cs3451-f21/a1-b-projection-and-line-drawing-chelliy from Gatech CS3451
 
 # Results
 
