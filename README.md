@@ -50,7 +50,8 @@ Below are the results that your program should draw when you press the 1-9 and t
 
 The results shown below were rendered in a square window.  If the window is not square, the orthographic projection will stretch the content to fill the window, while the perspective projection should keep the correct aspect ratio (squares will remain square) and window height, but show more/less of the horizontal view depending on if the window is wider (more) or narrower (less) than the height.
 
-![results](project_1b_results.jpeg)
+![results](result1-9.jpeg)
+![results](result0.jpeg)
 
 # Authorship Rules
 
