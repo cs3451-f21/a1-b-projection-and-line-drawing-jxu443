@@ -9,9 +9,9 @@ export default defineConfig({
   server: {
     https: true,
 
-    hmr: {
-      port: 3000
-    }
+    // hmr: {
+    //   port: 3000
+    // }
   },
   base: './',
   publicPath: './',
